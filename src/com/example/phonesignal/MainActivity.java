@@ -14,8 +14,10 @@ import socket.longwind.MinaTcpClient;
 import socket.longwind.MinaUdpClient;
 import vrmsg.WifiMessage;
 import android.R.integer;
+import android.R.string;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
@@ -29,6 +31,8 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.NumberPicker;
+import android.widget.NumberPicker.OnValueChangeListener;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -96,6 +100,12 @@ public class MainActivity extends Activity
 
 	private boolean thread_runable = false;
 
+	private NumberPicker pos_picker = null;
+
+	private int posNum = 10;
+
+	private String[] pos_nums;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -133,6 +143,13 @@ public class MainActivity extends Activity
 
 		tv_pos = (TextView) findViewById(R.id.tv_pos);
 		spin_server = (Spinner) findViewById(R.id.spin_server);
+
+		pos_picker = (NumberPicker) findViewById(R.id.np_posNum);
+		pos_picker.setMinValue(1);
+		pos_picker.setMaxValue(18);
+
+		Resources res = getResources();
+		pos_nums = res.getStringArray(R.array.pos_nums);
 
 		spin_server.setOnItemSelectedListener(new OnItemSelectedListener()
 		{
@@ -229,6 +246,22 @@ public class MainActivity extends Activity
 			}
 
 		});
+
+		pos_picker.setOnValueChangedListener(new OnValueChangeListener()
+		{
+
+			@Override
+			public void onValueChange(NumberPicker picker, int oldVal,
+			        int newVal)
+			{
+
+				// TODO Auto-generated method stub
+				posNum = newVal;
+				setInputPosition();
+			}
+
+		});
+
 		mHandler = new Handler()
 		{
 
@@ -275,14 +308,6 @@ public class MainActivity extends Activity
 		initialUIState();
 	}
 
-	protected void handleThreadFinished()
-	{
-
-		// TODO Auto-generated method stub
-		btn_sam.setEnabled(true);
-		btn_loc.setEnabled(true);
-	}
-
 	/**
 	 * @param i
 	 * 
@@ -310,8 +335,7 @@ public class MainActivity extends Activity
 		thread_runable = true;
 		Thread aThread = new SampleThread(buttonId, times, interval);
 
-		btn_sam.setEnabled(false);
-		btn_loc.setEnabled(false);
+		handleThreading();
 		aThread.start();
 	}
 
@@ -322,9 +346,6 @@ public class MainActivity extends Activity
 		thread_runable = false;
 	}
 
-	/**
-     * 
-     */
 	private void initialUIState()
 	{
 
@@ -332,6 +353,7 @@ public class MainActivity extends Activity
 		btn_sam.setEnabled(false);
 		btn_loc.setEnabled(false);
 		btn_stop.setEnabled(false);
+		pos_picker.setEnabled(false);
 	}
 
 	protected void handleDisConnect(Message msg)
@@ -343,6 +365,7 @@ public class MainActivity extends Activity
 		btn_loc.setEnabled(false);
 		btn_disconn.setEnabled(false);
 		btn_stop.setEnabled(false);
+		pos_picker.setEnabled(false);
 		stopThread();
 	}
 
@@ -351,11 +374,44 @@ public class MainActivity extends Activity
 
 		btn_con.setEnabled(false);
 		btn_disconn.setEnabled(true);
-		btn_stop.setEnabled(true);
 		btn_sam.setEnabled(true);
 		btn_loc.setEnabled(true);
-
+		pos_picker.setEnabled(true);
 	}
+
+	protected void handleThreading()
+	{
+
+		btn_sam.setEnabled(false);
+		btn_loc.setEnabled(false);
+		pos_picker.setEnabled(false);
+	}
+
+	protected void handleThreadFinished()
+	{
+
+		btn_stop.setEnabled(false);
+		btn_sam.setEnabled(true);
+		btn_loc.setEnabled(true);
+		pos_picker.setEnabled(true);
+	}
+
+	// protected void handleSampling()
+	// {
+	//
+	// pos_picker.setEnabled(true);
+	// }
+	//
+	// protected void handlePositioning()
+	// {
+	//
+	// btn_con.setEnabled(false);
+	// btn_disconn.setEnabled(true);
+	// btn_stop.setEnabled(true);
+	// btn_sam.setEnabled(true);
+	// btn_loc.setEnabled(true);
+	// pos_picker.setEnabled(true);
+	// }
 
 	protected void bindSpinner(String server)
 	{
@@ -659,6 +715,36 @@ public class MainActivity extends Activity
 		builder.setY(y);
 		builder.setZ(z);
 		return builder.build();
+	}
+
+	public void setInputPosition()
+	{
+
+		if (pos_nums.length < 1) return;
+		if (posNum < 1 || posNum > 18) return;
+		String posString = pos_nums[posNum - 1];
+		String pos[] = posString.split(",");
+		if (pos.length != 3) return;
+
+		edt_x.setText(pos[0]);
+		edt_y.setText(pos[1]);
+		edt_z.setText(pos[2]);
+		// double x = 0;
+		// double y = 0;
+		// double z = 0;
+		// try
+		// {
+		// x = Double.valueOf(pos[0]);
+		// y = Double.valueOf(pos[1]);
+		// z = Double.valueOf(pos[2]);
+		//
+		// }
+		// catch (Exception e)
+		// {
+		// // TODO: handle exception
+		// return;
+		// }
+
 	}
 
 }

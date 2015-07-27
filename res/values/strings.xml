@@ -5,4 +5,31 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="server_ip">server</string>
+
+    <string-array name="pos_nums">
+        <item>1,0,10</item>
+        <item>1,0,8</item>
+        <item>1,0,6</item>
+        <item>1,0,4</item>
+        <item>1,0,2</item>
+        
+        <item>3,0,2</item>
+        
+        <item>5,0,2</item>
+        <item>5,0,4</item>
+        <item>5,0,6</item>
+        <item>5,0,8</item>
+        <item>5,0,10</item>
+        
+        <item>6.5,0,1</item>
+        <item>8.5,0,1</item>
+        
+        <item>10.5,0,2</item>
+        <item>10.5,0,4</item>
+        <item>10.5,0,6</item>
+        <item>10.5,0,8</item>
+        <item>10.5,0,10</item>
+        
+    </string-array>
+
 </resources>
